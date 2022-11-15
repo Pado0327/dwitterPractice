@@ -1,57 +1,21 @@
 import express from 'express';
-import {
-  handleGet,
-  handleGetWithId,
-  handlePost,
-  handlePut,
-  handleDelete,
-} from '../controller/controller.js';
+import * as TweetsController from '../controller/controller.js';
 
 const router = express.Router();
 // 유저네임이나 이런걸 보내는 것보다 req로 보내야하나?
 //Get /tweets
 //Get /tweets?username=:username
-router.get('/', (req, res, next) => {
-  const username = req.query.username;
-  const data = handleGet(username);
-  res.status(200).json(data);
-});
+router.get('/', TweetsController.handleGet);
 
 //GET /tweets/:id
-router.get('/', (req, res, next) => {
-  const id = req.params.id;
-  const tweet = handleGetWithId(id);
-  if (tweet) {
-    res.status(200).json(tweet);
-  } else {
-    res.status(404).json({ message: `Tweet id(${id} not found` });
-  }
-});
+router.get('/:id', TweetsController.handleGetWithId);
 
 //POST /tweets
-router.post('/', (req, res, next) => {
-  const { text, name, username } = req.body;
-  const tweet = handlePost(text, name, username);
-  res.status(201).json(tweet);
-});
+router.post('/', TweetsController.handlePost);
 
-//TODO: 더 해야하나?? 리팩토링을?
+//TODO: 더 해야하나?? 리팩토링을?0-
 // PUT /tweets/:id
-router.put('/:id', (req, res, next) => {
-  const id = req.params.id;
-  const text = req.body.text;
-  const tweet = handlePut(id);
-  if (tweet) {
-    tweet.text = text;
-    res.status(200).json(tweet);
-  } else {
-    res.status(404).json({ message: `Tweet id(${id} not found` });
-  }
-});
+router.put('/:id', TweetsController.handlePut);
 // DELETE /tweets/:id
-router.delete('/:id', (req, res, next) => {
-  const id = req.params.id;
-  handleDelete(id);
-  res.sendStatus(204);
-});
+router.delete('/:id', TweetsController.handleDelete);
 export default router;

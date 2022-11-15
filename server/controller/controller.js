@@ -1,36 +1,47 @@
 import Tweets from '../data/data.js';
 
-const tweets = new Tweets();
+const tweetsRepository = new Tweets();
 
-export const handleGet = (userName) => {
-  console.log(tweets.tweet);
-  return userName
-    ? tweets.tweet.filter((t) => t.username === username)
-    : tweets.tweet;
-};
+export async function handleGet(req, res, next) {
+  const username = req.query.username;
+  const tweets = await (username
+    ? tweetsRepository.getAllTweetsByUserName(username)
+    : tweetsRepository.getAllTweets());
+  res.status(200).json(tweets);
+}
 
-export const handleGetWithId = (id) => {
-  return tweets.tweet.find((t) => t.id === id);
-};
+export async function handleGetWithId(req, res, next) {
+  const id = req.params.id;
+  console.log(id);
+  const tweet = await tweetsRepository.getAllTweetsById(id);
+  if (tweet) {
+    res.status(200).json(tweet);
+  } else {
+    res.status(404).json({ message: `Tweet id(${id} not found` });
+  }
+}
 
-export const handlePost = (text, name, username) => {
-  const tweet = {
-    id: Date.now().toString(),
-    text,
-    createdAt: new Date(),
-    name,
-    username,
-  };
-  tweets.updateTweet(tweet);
-  return tweet;
-};
+export async function handlePost(req, res, next) {
+  const { text, name, username } = req.body;
+  const tweet = await tweetsRepository.createTweets(text, name, username);
+  res.status(201).json(tweet);
+}
 
 // do I need to do it more here?
-export const handlePut = (id) => {
-  return tweets.tweet.find((t) => t.id === id);
-};
+export async function handlePut(req, res, next) {
+  const id = req.params.id;
+  const text = req.body.text;
+  const tweet = await tweetsRepository.updateTweets(id);
+  if (tweet) {
+    tweet.text = text;
+    res.status(200).json(tweet);
+  } else {
+    res.status(404).json({ message: `Tweet id(${id} not found` });
+  }
+}
 
-export const handleDelete = (id) => {
-  tweets.deleteTweet(id);
-  return tweets.tweet;
-};
+export async function handleDelete(req, res, next) {
+  const id = req.params.id;
+  await tweetsRepository.deleteTweet(id);
+  res.sendStatus(204);
+}
