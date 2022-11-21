@@ -3,19 +3,21 @@ import axios from 'axios';
 export default class TweetService {
   constructor(baseURL) {
     this.baseURL = baseURL;
+    this.instance = axios.create({
+      baseURL,
+      headers: { 'Cotent-Type': 'application/json' },
+    });
   }
 
   async getTweets(username) {
-    const url = username
-      ? `${this.baseURL}/tweets?username=${username}`
-      : `${this.baseURL}/tweets`;
-    const tweets = await axios.get(url);
+    const url = username ? `/tweets?username=ss` : `/tweets`;
+    const response = await this.instance.get(url);
 
-    if (tweets.status !== 200) {
-      throw new Error(tweets.message);
+    if (response.status !== 200) {
+      throw new Error(response.message);
     }
 
-    return tweets.data;
+    return response.data;
   }
 
   async postTweet(text) {
@@ -24,19 +26,17 @@ export default class TweetService {
       username: 'ellie',
       text,
     };
-    const tweet = await axios.post('http://localhost:8080/tweets', newTweet);
+    const response = await axios.post(`${this.baseURL}/tweets`, newTweet);
 
-    if (tweet.status !== 201) {
-      throw new Error(tweet.message);
+    if (response.status !== 201) {
+      throw new Error(response.message);
     }
 
-    return tweet.data;
+    return response.data;
   }
 
   async deleteTweet(tweetId) {
-    const response = await axios.delete(
-      `http://localhost:8080/tweets/${tweetId}`
-    );
+    const response = await axios.delete(`${this.baseURL}/tweets/${tweetId}`);
 
     if (response.status !== 204) {
       throw new Error(response.message);
@@ -44,13 +44,14 @@ export default class TweetService {
   }
 
   async updateTweet(tweetId, text) {
-    const tweet = await axios.put(`http://localhost:8080/tweets/${tweetId}`, {
+    const response = await axios.put(`${this.baseURL}/tweets/${tweetId}`, {
       text,
     });
 
-    if (tweet.status !== 200) {
-      throw new Error(tweet.message);
+    if (response.status !== 200) {
+      throw new Error(response.message);
     }
-    return tweet.data;
+
+    return response.data;
   }
 }
