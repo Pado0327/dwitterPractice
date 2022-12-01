@@ -2,6 +2,7 @@ import express from 'express';
 import * as authController from '../controller/authController.js';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validator.js';
+import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const validateCrendential = [
 ];
 
 const validateSignUp = [
-  ...validateCrendentiala,
+  ...validateCrendential,
   body('name').trim().escape().notEmpty().withMessage('name is missing'),
   body('email').isEmail().normalizeEmail().withMessage('invalid email'),
   body('url')
@@ -27,10 +28,10 @@ const validateSignUp = [
   validate,
 ];
 
-//router.get('/me', authController.handleSignUp);
-
 router.post('/signup', validateSignUp, authController.handleSignUp);
 
 router.post('/login', validateCrendential, authController.handleLogin);
+
+router.get('/me', isAuth, authController.handleGetMe);
 
 export default router;

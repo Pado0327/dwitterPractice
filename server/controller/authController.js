@@ -1,11 +1,10 @@
-import Users from '../data/user.js';
+import usersRepository from '../data/user.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 const secretKey = '3T#hM8#n^#Qn7aQyaZuIK7VdpRPr#*P7';
 const jwtExpiresInDays = '2d';
 const bcryptSaltRounds = 12;
-const usersRepository = new Users();
 
 export async function handleSignUp(req, res, next) {
   //1 check id and if it eixts in database
@@ -54,4 +53,11 @@ function createJwtToken(userId) {
   });
 
   return token;
+}
+
+export async function handleGetMe(req, res, next) {
+  console.log(req.userId);
+  const user = await usersRepository.findByUserId(req.userId);
+
+  res.status(200).json({ token: req.token, username: user.username });
 }
