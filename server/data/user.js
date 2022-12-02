@@ -5,7 +5,7 @@ class User {
       {
         id: '1',
         username: 'Test1',
-        password: 'test2',
+        password: 'Test1234567!',
         name: 'test1',
         email: 'test1@gmail.com',
       },

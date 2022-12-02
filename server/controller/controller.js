@@ -22,8 +22,8 @@ export async function handleGetWithId(req, res, next) {
 }
 
 export async function handlePost(req, res, next) {
-  const { text, name, username } = req.body;
-  const tweet = await tweetsRepository.createTweets(text, name, username);
+  const { text } = req.body;
+  const tweet = await tweetsRepository.createTweets(text, req.userId);
   res.status(201).json(tweet);
 }
 
@@ -31,7 +31,7 @@ export async function handlePost(req, res, next) {
 export async function handlePut(req, res, next) {
   const id = req.params.id;
   const text = req.body.text;
-  const tweet = await tweetsRepository.updateTweets(id);
+  const tweet = await tweetsRepository.updateTweets(id, text);
   if (tweet) {
     tweet.text = text;
     res.status(200).json(tweet);
