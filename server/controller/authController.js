@@ -37,7 +37,8 @@ export async function handleLogin(req, res, next) {
   if (!user) {
     return res.status(401).json({ message: `Invalid username or password` });
   }
-  const isValidPassword = bcrypt.compare(password, user.password);
+
+  const isValidPassword = await bcrypt.compare(password, user.password);
 
   if (!isValidPassword) {
     return res.status(400).json({ message: `{Invalid username or password}` });

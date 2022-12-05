@@ -9,7 +9,7 @@ export const isAuth = async (req, res, next) => {
   }
 
   const token = req.headers.authorization.split(' ')[1];
-
+  console.log(token);
   jwt.verify(token, secretKey, async (error, decoded) => {
     if (error) {
       return res.status(401).json({ error: 'Wrong credential' });

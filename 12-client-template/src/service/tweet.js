@@ -1,16 +1,19 @@
 import axios from 'axios';
 
 export default class TweetService {
-  constructor(baseURL) {
+  constructor(baseURL, tokenStorage) {
     this.baseURL = baseURL;
+    this.tokenStorage = tokenStorage;
     this.instance = axios.create({
       baseURL,
-      headers: { 'Cotent-Type': 'application/json' },
+      headers: {
+        'Cotent-Type': 'application/json',
+      },
     });
   }
 
   async getTweets(username) {
-    const url = username ? `/tweets?username=ss` : `/tweets`;
+    const url = username ? `/tweets?username=${username}` : `/tweets`;
     const response = await this.instance.get(url);
 
     if (response.status !== 200) {
@@ -26,7 +29,12 @@ export default class TweetService {
       username: 'ellie',
       text,
     };
-    const response = await axios.post(`${this.baseURL}/tweets`, newTweet);
+    const token = this.tokenStorage.getToken();
+    const response = await axios.post(`${this.baseURL}/tweets`, newTweet, {
+      headers: {
+        Authorization: `bearer ${token}`,
+      },
+    });
 
     if (response.status !== 201) {
       throw new Error(response.message);
