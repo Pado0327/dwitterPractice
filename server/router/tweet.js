@@ -16,7 +16,7 @@ const validateTweet = [
 
 //Get /tweets
 //Get /tweets?username=:username
-router.get('/', TweetsController.handleGet);
+router.get('/', isAuth, TweetsController.handleGet);
 
 //GET /tweets/:id
 router.get('/:id', isAuth, TweetsController.handleGetWithId);

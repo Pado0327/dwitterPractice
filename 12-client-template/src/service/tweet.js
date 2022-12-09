@@ -1,65 +1,44 @@
-import axios from 'axios';
-
 export default class TweetService {
-  constructor(baseURL, tokenStorage) {
-    this.baseURL = baseURL;
+  constructor(http, tokenStorage) {
+    this.http = http;
     this.tokenStorage = tokenStorage;
-    this.instance = axios.create({
-      baseURL,
-      headers: {
-        'Cotent-Type': 'application/json',
-      },
-    });
   }
 
   async getTweets(username) {
-    const url = username ? `/tweets?username=${username}` : `/tweets`;
-    const response = await this.instance.get(url);
-
-    if (response.status !== 200) {
-      throw new Error(response.message);
-    }
-
-    return response.data;
+    const query = username ? `?username=${username}` : '';
+    return this.http.fetch(`/tweets${query}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
   }
 
   async postTweet(text) {
-    const newTweet = {
-      name: 'Ellie',
-      username: 'ellie',
-      text,
-    };
-    const token = this.tokenStorage.getToken();
-    const response = await axios.post(`${this.baseURL}/tweets`, newTweet, {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
+    return this.http.fetch(`/tweets`, {
+      method: 'POST',
+      body: JSON.stringify({ text, username: 'Jaejin', name: 'Jaejin' }),
+      headers: this.getHeaders(),
     });
-
-    if (response.status !== 201) {
-      throw new Error(response.message);
-    }
-
-    return response.data;
   }
 
   async deleteTweet(tweetId) {
-    const response = await axios.delete(`${this.baseURL}/tweets/${tweetId}`);
-
-    if (response.status !== 204) {
-      throw new Error(response.message);
-    }
+    return this.http.fetch(`/tweets/${tweetId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
   }
 
   async updateTweet(tweetId, text) {
-    const response = await axios.put(`${this.baseURL}/tweets/${tweetId}`, {
-      text,
+    return this.http.fetch(`/tweets/${tweetId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ text }),
+      headers: this.getHeaders(),
     });
+  }
 
-    if (response.status !== 200) {
-      throw new Error(response.message);
-    }
-
-    return response.data;
+  getHeaders() {
+    const token = this.tokenStorage.getToken();
+    return {
+      Authorization: `Bearer ${token}`,
+    };
   }
 }

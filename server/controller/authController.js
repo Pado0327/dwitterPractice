@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 const secretKey = '3T#hM8#n^#Qn7aQyaZuIK7VdpRPr#*P7';
-const jwtExpiresInDays = '2d';
+const jwtExpiresInDays = 2;
 const bcryptSaltRounds = 12;
 
 export async function handleSignUp(req, res, next) {

@@ -1,41 +1,24 @@
-import axios from 'axios';
 export default class AuthService {
-  constructor(baseURL, tokenStorage) {
-    this.baseURL = baseURL;
-    this.instance = axios.create({
-      baseURL,
-      headers: { 'Cotent-Type': 'application/json' },
-    });
+  constructor(http, tokenStorage) {
+    this.http = http;
     this.tokenStorage = tokenStorage;
   }
 
   async login(username, password) {
-    const response = await this.instance.post('auth/login', {
-      username,
-      password,
+    const data = await this.http.fetch('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
     });
-
-    if (response.status !== 200) {
-      throw new Error(response.message);
-    }
-    this.tokenStorage.saveToken(response.data.token);
-    return response.data;
+    this.tokenStorage.saveToken(data.token);
+    return data;
   }
 
   async me() {
     const token = this.tokenStorage.getToken();
-
-    const response = await this.instance.get('auth/me', {
-      headers: {
-        Authorization: `bearer ${token}`,
-      },
+    return this.http.fetch('/auth/me', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    if (response.status !== 200) {
-      throw new Error(response.message);
-    }
-
-    return response.data;
   }
 
   async logout() {
@@ -43,18 +26,19 @@ export default class AuthService {
   }
 
   async signup(username, password, name, email, url) {
-    const response = await this.instance.post('auth/signup', {
-      username,
-      password,
-      name,
-      email,
-      url,
+    const data = await this.http.fetch('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        password,
+        name,
+        email,
+        url,
+      }),
     });
-    this.tokenStorage.saveToken(response.data.token);
-    if (response.status !== 201) {
-      throw new Error(response.message);
-    }
-
-    return response.data;
+    this.tokenStorage.saveToken(data.token);
+    return data;
   }
 }
+
+//TODO: need to replace axio with fetch(create a custom class for it)
