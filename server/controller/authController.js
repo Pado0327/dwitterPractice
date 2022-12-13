@@ -1,10 +1,7 @@
 import usersRepository from '../data/user.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-
-const secretKey = '3T#hM8#n^#Qn7aQyaZuIK7VdpRPr#*P7';
-const jwtExpiresInDays = 2;
-const bcryptSaltRounds = 12;
+import { config } from '../config.js';
 
 export async function handleSignUp(req, res, next) {
   //1 check id and if it eixts in database
@@ -16,7 +13,7 @@ export async function handleSignUp(req, res, next) {
     return res.status(409).json({ message: `User already exsits` });
   }
 
-  const hashed = await bcrypt.hash(password, bcryptSaltRounds);
+  const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
   const userId = await usersRepository.createUser({
     username,
     password: hashed,
@@ -45,12 +42,13 @@ export async function handleLogin(req, res, next) {
   }
 
   const token = createJwtToken(user.id);
+  console.log(token);
   res.status(200).json({ username, token });
 }
 
 function createJwtToken(userId) {
-  const token = jwt.sign({ userId }, secretKey, {
-    expiresIn: jwtExpiresInDays,
+  const token = jwt.sign({ userId }, config.jwt.secretKey, {
+    expiresIn: config.jwt.expiresInSec,
   });
 
   return token;

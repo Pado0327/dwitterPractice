@@ -13,7 +13,7 @@ export async function handleGet(req, res, next) {
 export async function handleGetWithId(req, res, next) {
   const id = req.params.id;
   console.log(id);
-  const tweet = await tweetsRepository.getAllTweetsById(id);
+  const tweet = await tweetsRepository.getTweetsById(id);
   if (tweet) {
     res.status(200).json(tweet);
   } else {
@@ -31,17 +31,36 @@ export async function handlePost(req, res, next) {
 export async function handlePut(req, res, next) {
   const id = req.params.id;
   const text = req.body.text;
-  const tweet = await tweetsRepository.updateTweets(id, text);
-  if (tweet) {
-    tweet.text = text;
-    res.status(200).json(tweet);
-  } else {
-    res.status(404).json({ message: `Tweet id(${id} not found` });
+  const tweet = await tweetsRepository.getTweetsById(id);
+
+  if (!tweet) {
+    return res.status(404).json({ message: `Tweet id(${id} not found` });
   }
+
+  if (tweet.userId != req.userId) {
+    return res
+      .status(403)
+      .json({ message: 'Sorry, you are not allowed to do it' });
+  }
+
+  const updated = await tweetsRepository.updateTweets(id, text);
+
+  res.status(200).json(updated);
 }
 
 export async function handleDelete(req, res, next) {
   const id = req.params.id;
+  const tweet = await tweetsRepository.getTweetsById(id);
+
+  if (!tweet) {
+    return res.status(404).json({ message: `Tweet id(${id} not found` });
+  }
+
+  if (tweet.userId != req.userId) {
+    return res
+      .status(403)
+      .json({ message: 'Sorry, you are not allowed to do it' });
+  }
   await tweetsRepository.deleteTweet(id);
   res.sendStatus(204);
 }

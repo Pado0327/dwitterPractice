@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
+import { config } from '../config.js';
 import usersRepository from '../data/user.js';
-
-const secretKey = '3T#hM8#n^#Qn7aQyaZuIK7VdpRPr#*P7';
 
 export const isAuth = async (req, res, next) => {
   if (!req.headers.authorization) {
@@ -9,8 +8,7 @@ export const isAuth = async (req, res, next) => {
   }
 
   const token = req.headers.authorization.split(' ')[1];
-  console.log(token);
-  jwt.verify(token, secretKey, async (error, decoded) => {
+  jwt.verify(token, config.jwt.secretKey, async (error, decoded) => {
     if (error) {
       return res.status(401).json({ message: 'Wrong credential' });
     }

@@ -38,7 +38,7 @@ export default class Data {
     );
   };
 
-  getAllTweetsById = async (id) => {
+  getTweetsById = async (id) => {
     const found = this.#tweet.find((tweet) => tweet.id === id);
     if (!found) {
       return null;
@@ -58,7 +58,7 @@ export default class Data {
       userId,
     };
     this.#tweet = [tweet, ...this.#tweet];
-    return this.getAllTweetsById(tweet.id);
+    return this.getTweetsById(tweet.id);
   };
 
   updateTweets = async (id, text) => {
@@ -66,7 +66,7 @@ export default class Data {
     if (tweet) {
       tweet.text = text;
     }
-    return this.getAllTweetsById(tweet.id);
+    return this.getTweetsById(tweet.id);
   };
 
   deleteTweet = (id) => {
