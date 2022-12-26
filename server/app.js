@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import tweetRouter from './router/tweet.js';
 import authRouter from './router/auth.js';
 import { config } from './config.js';
+import { db } from './data/db/database.js';
 
 const app = express();
 
@@ -24,5 +25,7 @@ app.use((error, req, res, next) => {
   console.log(error);
   res.sendStatus(500);
 });
+
+db.getConnection().then((connection) => console.log(connection));
 
 app.listen(config.host.port);

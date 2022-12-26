@@ -1,3 +1,5 @@
+import { db } from './db/database.js';
+
 class User {
   #user;
   constructor() {
@@ -14,19 +16,27 @@ class User {
   }
 
   findByUserName = async (userName) => {
-    return await this.#user.find((u) => u.username === userName);
+    return db
+      .execute('SELECT * FROM users WHERE username=?', [userName]) //
+      .then((result) => result[0][0]);
   };
 
   createUser = async (user) => {
-    const created = { ...user, id: Date.now().toString() };
-    this.#user.push(created);
-    console.log(created);
-    return created.id;
+    const { username, password, name, email } = user;
+    const url = user.url == null ? null : user.url;
+
+    return db
+      .execute(
+        'INSERT INTO users (username, password, name, email, url) VALUES (?,?,?,?,?)',
+        [username, password, name, email, url]
+      )
+      .then((result) => result[0].insertId);
   };
 
   findByUserId = async (userId) => {
-    console.log(userId);
-    return await this.#user.find((u) => u.id === userId);
+    return db
+      .execute('SELECT * FROM users WHERE id=?', [userId]) //
+      .then((result) => result[0][0]);
   };
 }
 
