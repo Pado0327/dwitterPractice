@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config.js';
-import usersRepository from '../data/user.js';
+import * as usersRepository from '../data/user.js';
 
 export const isAuth = async (req, res, next) => {
   if (!req.headers.authorization) {
@@ -12,7 +12,7 @@ export const isAuth = async (req, res, next) => {
     if (error) {
       return res.status(401).json({ message: 'Wrong credential' });
     }
-
+    console.log(decoded.userId);
     const user = await usersRepository.findByUserId(decoded.userId);
     console.log(user);
     if (!user) {

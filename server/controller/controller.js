@@ -12,7 +12,7 @@ export async function handleGet(req, res, next) {
 
 export async function handleGetWithId(req, res, next) {
   const id = req.params.id;
-  console.log(id);
+  console.log(id + 'tweet');
   const tweet = await tweetsRepository.getTweetsById(id);
   if (tweet) {
     res.status(200).json(tweet);

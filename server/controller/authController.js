@@ -1,4 +1,4 @@
-import usersRepository from '../data/user.js';
+import * as usersRepository from '../data/user.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { config } from '../config.js';
@@ -38,7 +38,7 @@ export async function handleLogin(req, res, next) {
   const isValidPassword = await bcrypt.compare(password, user.password);
 
   if (!isValidPassword) {
-    return res.status(400).json({ message: `{Invalid username or password}` });
+    return res.status(400).json({ message: `Invalid username or password` });
   }
 
   const token = createJwtToken(user.id);

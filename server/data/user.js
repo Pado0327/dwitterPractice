@@ -1,34 +1,25 @@
-class User {
-  #user;
-  constructor() {
-    this.#user = [
-      {
-        id: '1',
-        username: 'Test1',
-        password:
-          '$2b$12$TgzEF7.CLGQ8YWDwmuXN7.eNacbCaqUl3zqeRGIAU8M3K7cH9Fw8m',
-        name: 'test1',
-        email: 'test1@gmail.com',
-      },
-    ];
-  }
+import { ObjectId } from 'mongodb';
+import { getUsers } from '../database/database.js';
 
-  findByUserName = async (userName) => {
-    return await this.#user.find((u) => u.username === userName);
-  };
-
-  createUser = async (user) => {
-    const created = { ...user, id: Date.now().toString() };
-    this.#user.push(created);
-    console.log(created);
-    return created.id;
-  };
-
-  findByUserId = async (userId) => {
-    console.log(userId);
-    return await this.#user.find((u) => u.id === userId);
-  };
+export async function findByUserName(username) {
+  return getUsers()
+    .findOne({ username })
+    .then((data) => {
+      return { ...data, id: data._id.toString() };
+    });
 }
 
-const user = new User();
-export default user;
+export const createUser = async (user) => {
+  return getUsers()
+    .insertOne(user)
+    .then((data) => data.insertedId.toString());
+};
+
+export const findByUserId = async (userId) => {
+  let id = new ObjectId(userId);
+  return getUsers()
+    .findOne({ _id: id })
+    .then((data) => {
+      return { ...data, id: data._id.toString() };
+    });
+};
