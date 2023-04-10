@@ -12,12 +12,13 @@ export const isAuth = async (req, res, next) => {
     if (error) {
       return res.status(401).json({ message: 'Wrong credential' });
     }
-    console.log(decoded.userId);
+
     const user = await usersRepository.findByUserId(decoded.userId);
-    console.log(user);
+
     if (!user) {
       return res.status(401).json({ message: 'No Such a user' });
     }
+
     req.userId = user.id;
     next();
   });

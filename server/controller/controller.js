@@ -1,6 +1,4 @@
-import Tweets from '../data/data.js';
-
-const tweetsRepository = new Tweets();
+import * as tweetsRepository from '../data/tweet.js';
 
 export async function handleGet(req, res, next) {
   const username = req.query.username;
@@ -12,7 +10,6 @@ export async function handleGet(req, res, next) {
 
 export async function handleGetWithId(req, res, next) {
   const id = req.params.id;
-  console.log(id + 'tweet');
   const tweet = await tweetsRepository.getTweetsById(id);
   if (tweet) {
     res.status(200).json(tweet);
@@ -31,8 +28,8 @@ export async function handlePost(req, res, next) {
 export async function handlePut(req, res, next) {
   const id = req.params.id;
   const text = req.body.text;
-  const tweet = await tweetsRepository.getTweetsById(id);
 
+  const tweet = await tweetsRepository.getTweetsById(id);
   if (!tweet) {
     return res.status(404).json({ message: `Tweet id(${id} not found` });
   }

@@ -1,5 +1,5 @@
 import { validationResult } from 'express-validator';
-//??? why?>>??
+
 export const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) {
