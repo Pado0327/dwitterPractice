@@ -23,7 +23,7 @@ export async function handleSignUp(req, res, next) {
   });
 
   const token = createJwtToken(userId);
-
+  setToken(res, token);
   res.status(201).json({ username, token });
 }
 
@@ -43,6 +43,7 @@ export async function handleLogin(req, res, next) {
 
   const token = createJwtToken(user.id);
   console.log(token);
+  setToken(res, token);
   res.status(200).json({ username, token });
 }
 
@@ -52,6 +53,16 @@ function createJwtToken(userId) {
   });
 
   return token;
+}
+
+function setToken(res, token) {
+  const options = {
+    maxAge: config.jwt.expiresInSec * 1000,
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+  };
+  res.cookie('token', token, options);
 }
 
 export async function handleGetMe(req, res, next) {
